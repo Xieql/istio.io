@@ -206,8 +206,8 @@ spec:
   parentRefs:
   - name: mygateway
     namespace: istio-system
-    hostnames: ["httpbin.example.com"]
-    rules:
+  hostnames: ["httpbin.example.com"]
+  rules:
   - matches:
     - path:
         type: PathPrefix
@@ -318,7 +318,9 @@ $ export SECURE_INGRESS_PORT=$(kubectl get gtw mygateway -n istio-system -o json
 1.  创建 `helloworld-credential` Secret：
 
     {{< text bash >}}
-    $ kubectl create -n istio-system secret tls helloworld-credential --key=helloworld-v1.example.com.key --cert=helloworld-v1.example.com.crt
+    $ kubectl create -n istio-system secret tls helloworld-credential \
+    --key=example_certs1/helloworld.example.com.key \
+    --cert=example_certs1/helloworld.example.com.crt
     {{< /text >}}
 
 1.  使用 `httpbin.example.com` 和 `helloworld.example.com` 主机配置入口网关：
@@ -402,7 +404,6 @@ metadata:
 spec:
   gatewayClassName: istio
   listeners:
-
   - name: https-httpbin
     hostname: "httpbin.example.com"
     port: 443
@@ -446,8 +447,8 @@ spec:
   parentRefs:
   - name: mygateway
     namespace: istio-system
-    hostnames: ["helloworld.example.com"]
-    rules:
+  hostnames: ["helloworld.example.com"]
+  rules:
   - matches:
     - path:
         type: Exact
@@ -559,9 +560,9 @@ spec:
       certificateRefs:
       - name: httpbin-credential
         options:
-        gateway.istio.io/tls-terminate-mode: MUTUAL
-        allowedRoutes:
-        namespaces:
+          gateway.istio.io/tls-terminate-mode: MUTUAL
+    allowedRoutes:
+      namespaces:
         from: Selector
         selector:
           matchLabels:
